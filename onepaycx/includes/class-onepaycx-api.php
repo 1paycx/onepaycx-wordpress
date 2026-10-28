@@ -15,7 +15,7 @@ class OnePayCx_Api {
         $this->key = (string) $key;
     }
 
-    /** GET /v1/me — validates the key and returns { id, email, webhookSecret }. */
+    /** GET /v1/me — validates the key and returns { id, webhookSecret, livemode } (the secret for the key's mode). */
     public function me() {
         return $this->request('GET', '/v1/me');
     }
@@ -23,6 +23,20 @@ class OnePayCx_Api {
     /** POST /v1/payments — create a hosted-checkout payment. */
     public function create_payment(array $body) {
         return $this->request('POST', '/v1/payments', $body);
+    }
+
+    /** GET /v1/payments/{id} — the authoritative payment record (status, amount, currency, livemode). */
+    public function get_payment($id) {
+        $id = (string) $id;
+        if (!preg_match('/^[A-Za-z0-9_-]{1,64}$/', $id)) {
+            return array('ok' => false, 'status' => 0, 'data' => null, 'error' => 'invalid payment id');
+        }
+        return $this->request('GET', '/v1/payments/' . rawurlencode($id));
+    }
+
+    /** True unless the key is a test key (pk_test_…). */
+    public function is_live() {
+        return strpos($this->key, 'pk_test_') !== 0;
     }
 
     /**
@@ -35,6 +49,8 @@ class OnePayCx_Api {
             'headers' => array(
                 'Authorization' => 'Bearer ' . $this->key,
                 'Accept'        => 'application/json',
+                // Lets 1pay.cx record which integration created the payment.
+                'User-Agent'    => 'onepaycx-wordpress/' . ONEPAYCX_WP_VERSION,
             ),
         );
         if ($body !== null) {

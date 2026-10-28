@@ -2,10 +2,10 @@
 
 Add a "Pay by card or crypto" button to any WordPress page or post, with a block or a
 shortcode. For sites that are **not** a store: service pages, invoices, donation pages,
-one-off payment links. Buyers pay by card, Bitcoin or Monero on the hosted
+one-off payment links. Buyers pay by card or crypto on the hosted
 [1pay.cx](https://1pay.cx) checkout; you settle in crypto.
 
-- **Version 1.2.1** for WordPress 6.0+ and PHP 7.4+
+- **Version 1.3.0** for WordPress 6.0+ and PHP 7.4+
 - **1pay.cx Pay Button** block, or `[onepaycx_button amount="25.00" label="Pay $25"]`
 - Leave the amount blank and the buyer types their own: donations, "pay what you owe"
 - Fixed prices are signed server-side, so a visitor editing the page cannot change the charge

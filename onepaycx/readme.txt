@@ -4,7 +4,7 @@ Tags: payments, pay button, donations, bitcoin, monero
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,7 +94,9 @@ Hook `onepaycx_paid`:
 
 `add_action( 'onepaycx_paid', function ( $data ) { /* $data: paymentId, reference, amount, status */ } );`
 
-It only fires after the webhook signature has been verified.
+It fires once per payment, only for payments created by this site's buttons, after the
+webhook signature has been verified and the payment re-read from 1pay.cx as paid in the
+expected amount and currency. `$data` also carries `currency` and `livemode`.
 
 = What is direct mode? =
 
@@ -104,6 +106,20 @@ sees the standard payment page instead. Because the 1pay.cx page is skipped, dir
 mode does not offer Bitcoin or Monero.
 
 == Changelog ==
+
+= 1.3.0 =
+* Webhook hardening: verifies the timestamped signature header (deliveries older than five
+  minutes are rejected) when 1pay.cx sends it, and still accepts the original header.
+* The paid notification only fires `onepaycx_paid` for payments this site created, after
+  re-reading the payment from 1pay.cx and checking it is paid in the recorded amount and
+  currency, and only once per payment.
+* A live API key never accepts a test payment.
+* Payments created before this version have no local record, so their late webhooks no
+  longer fire `onepaycx_paid`.
+
+= 1.2.2 =
+* API requests now identify the plugin, so payments it creates are labelled WordPress in
+  your 1pay.cx dashboard.
 
 = 1.2.1 =
 * Plugin directory review: compatibility is declared in the readme only; no other changes to behaviour.
